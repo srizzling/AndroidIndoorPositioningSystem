@@ -22,4 +22,8 @@ public class CottonAP {
         }
         return temp;
     }
+
+    public ArrayList<AccessPoint> getAll(){
+        return aps;
+    }
 }
