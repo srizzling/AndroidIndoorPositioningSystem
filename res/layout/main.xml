@@ -4,10 +4,9 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView
+    <Spinner
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Hello World, MyActivity"
-            />
+            android:id="@+id/spinner" android:spinnerMode="dialog"/>
 </LinearLayout>
 
