@@ -13,5 +13,7 @@
             android:layout_height="wrap_content"
             android:text="Start"
             android:id="@+id/start"/>
+    <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="listen"
+            android:id="@+id/listen" android:layout_gravity="center_horizontal"/>
 </LinearLayout>
 

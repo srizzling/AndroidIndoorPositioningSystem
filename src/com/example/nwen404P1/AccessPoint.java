@@ -53,7 +53,7 @@ public class AccessPoint {
     private int y;
 
 
-    public AccessPoint(String MAC, int floor, int x, int y, String description){
+    public AccessPoint(String MAC, int floor, int x, int y, String description) {
         this.description = description;
         this.MAC = MAC;
         this.floor = floor;

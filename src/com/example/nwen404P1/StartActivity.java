@@ -12,7 +12,7 @@ import com.example.nwen404P1.Display;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StartActivity extends Activity implements AdapterView.OnItemSelectedListener, View.OnClickListener{
+public class StartActivity extends Activity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     private CottonAP aps = new CottonAP();
     private DrawView drawView;
     private String selectedLevel;
@@ -48,6 +48,10 @@ public class StartActivity extends Activity implements AdapterView.OnItemSelecte
         final Button button = (Button) findViewById(R.id.start);
         button.setOnClickListener(this);
         levels.setOnItemSelectedListener(this);
+
+        final Button button2 = (Button) findViewById(R.id.listen);
+        button2.setOnClickListener(this);
+
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -62,7 +66,7 @@ public class StartActivity extends Activity implements AdapterView.OnItemSelecte
     @Override
     public void onClick(View v) {
         Intent myIntent;
-        myIntent = new Intent(this, Display.class);
+        myIntent = new Intent(this, APLister.class);
         myIntent.putExtra("level", selectedLevel);
         startActivity(myIntent);
     }
