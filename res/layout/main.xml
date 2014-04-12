@@ -5,12 +5,13 @@
               android:layout_height="fill_parent"
         >
     <Spinner
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner" android:spinnerMode="dialog"/>
-    <ListView
+            android:id="@+id/spinner" android:spinnerMode="dropdown"/>
+    <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listView" android:layout_gravity="center_horizontal"/>
+            android:text="Start"
+            android:id="@+id/start"/>
 </LinearLayout>
 

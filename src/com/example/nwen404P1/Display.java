@@ -1,19 +1,19 @@
 package com.example.nwen404P1;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Spinner;
-import com.example.nwen404P1.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MyActivity extends Activity implements AdapterView.OnItemSelectedListener {
+/**
+ * Created by sriram on 12/04/14.
+ */
+public class Display extends Activity {
+
+    private DrawView drawView;
     private CottonAP aps = new CottonAP();
+
 
     /**
      * Called when the activity is first created.
@@ -21,25 +21,17 @@ public class MyActivity extends Activity implements AdapterView.OnItemSelectedLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        drawView = new DrawView(this);
+        drawView.setBackgroundColor(Color.WHITE);
         setUpAllAps();
+        String value = getIntent().getExtras().getString("level");
+        aps.getAPByFloor(Integer.parseInt(value));
+        drawView.setAps(aps.getAPByFloor(Integer.parseInt(value)));
+        setContentView(drawView);
     }
 
+
     public void setUpAllAps() {
-        List<String> availableFloors = new ArrayList<String>();
-        availableFloors.add("All");
-        availableFloors.add("1");
-        availableFloors.add("2");
-        availableFloors.add("3");
-        availableFloors.add("4");
-        availableFloors.add("5");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, availableFloors);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner levels = (Spinner) findViewById(R.id.spinner);
-        levels.setOnItemSelectedListener(this);
-        levels.setAdapter(adapter);
-
         ArrayList<AccessPoint> allAps = new ArrayList<AccessPoint>();
         AccessPoint ap1 = new AccessPoint("2c:3f:38:2a:d9:60", 3, 29, 40, "Outside CO338");
         AccessPoint ap2 = new AccessPoint("00:1e:7a:27:f2:60", 3, 11, 28, "Outside CO353");
@@ -100,31 +92,11 @@ public class MyActivity extends Activity implements AdapterView.OnItemSelectedLi
         aps.setAccessPoints(allAps);
     }
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            // An item was selected. You can retrieve the selected item using
-            String level = parent.getSelectedItem().toString();
-            ArrayList<AccessPoint> apsToShow = new ArrayList<AccessPoint>();
-            if(level == "All"){
-                apsToShow = aps.getAll();
-            }
-            else {
-                int floor = Integer.parseInt(level);
-                apsToShow = aps.getAPByFloor(floor);
-
-            }
-
-            final ArrayList<String> list = new ArrayList<String>();
-            for (int i = 0; i < apsToShow.size(); ++i) {
-                list.add(apsToShow.get(i).getDescription());
-            }
-            final ListView listview = (ListView) findViewById(R.id.listView);
-            ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, list);
-            listview.setAdapter(adapter);
-
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Another interface callback
-        }
+    public double calculateDistance(double levelInDb, double freqInMHz)    {
+        double exp = (27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(levelInDb)) / 20.0;
+        return Math.pow(10.0, exp);
     }
 
+
+
+}
