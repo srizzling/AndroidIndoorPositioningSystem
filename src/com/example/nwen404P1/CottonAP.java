@@ -2,6 +2,8 @@ package com.example.nwen404P1;
 
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import java.util.ArrayList;
 
@@ -29,17 +31,26 @@ public class CottonAP {
         return temp;
     }
 
+    public AccessPoint getAPByMac(String mac) {
+        for (AccessPoint ap : aps) {
+            if (ap.getMAC().equals(mac)) {
+                return ap;
+            }
+        }
+        return null;
+    }
+
     /*
     * Checks weather element exists here...
      */
     public boolean filter(String mac) {
         for (AccessPoint ap : aps) {
-            Log.d(mac, ap.getMAC());
+            //Log.d(mac, ap.getMAC());
+            //Log.d(mac, ap.getMAC());
             if (ap.getMAC().equals(mac)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -107,4 +118,6 @@ public class CottonAP {
     public ArrayList<AccessPoint> getAll() {
         return aps;
     }
+
+
 }

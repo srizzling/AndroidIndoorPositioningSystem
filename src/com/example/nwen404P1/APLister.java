@@ -1,32 +1,30 @@
 package com.example.nwen404P1;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sriram on 12/04/14.
  */
-public class APLister extends Activity {
+public class APLister extends Activity implements View.OnClickListener {
+    private static final int showX = 300;
     Map<String, Double> macToLevel;
     Map<String, Integer> macToFreq;
     TextView text;
-
     List<String> macs;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +41,10 @@ public class APLister extends Activity {
         macToLevel = new HashMap<String, Double>();
 
         final double factor = 0.96;
+
+        final Button button = (Button) findViewById(R.id.clear);
+        button.setOnClickListener(this);
+
 
         macs = new LinkedList<String>();
 
@@ -82,8 +84,6 @@ public class APLister extends Activity {
 
     }
 
-    private static final int showX = 300;
-
     public void updateResults() {
         String results = "";
         int remaining = showX;
@@ -99,8 +99,8 @@ public class APLister extends Activity {
             if (filter.filter(mac)) {
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
 
-                results += mac + " : " + f.format(macToLevel.get(mac)) +
-                        " (== " + f.format(distance) + " m)\n";
+                results += filter.getAPByMac(mac).getDescription() + " : " + mac + " : " + f.format(macToLevel.get(mac)) +
+                        " (== " + f.format(distance) + " m)" + 1000000.0 * macToFreq.get(mac);
             }
         }
         text.setText(results);
@@ -110,8 +110,6 @@ public class APLister extends Activity {
         final double a = -0.07363796;
         final double b = -2.52218124;
 
-//final double a = -0.07192023;
-//final double b = -2.40415772;
 
         final double C = 299792458.0;
         final double ROUTER_HEIGHT = 2.5;
@@ -130,4 +128,12 @@ public class APLister extends Activity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        macToLevel.clear();
+        macToFreq.clear();
+        macs.clear();
+        text.clearComposingText();
+
+    }
 }

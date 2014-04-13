@@ -2,12 +2,14 @@ package com.example.nwen404P1;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
-import android.widget.*;
-import com.example.nwen404P1.R;
-import com.example.nwen404P1.Display;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +68,17 @@ public class StartActivity extends Activity implements AdapterView.OnItemSelecte
     @Override
     public void onClick(View v) {
         Intent myIntent;
-        myIntent = new Intent(this, APLister.class);
+        myIntent = new Intent(this, Display.class);
         myIntent.putExtra("level", selectedLevel);
         startActivity(myIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }
 
