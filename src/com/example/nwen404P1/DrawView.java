@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import math.geom2d.Point2D;
+import math.geom2d.conic.Circle2D;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -94,6 +96,7 @@ public class DrawView extends View {
         int diffY = h / 90;
 
 
+
         // there is 87 points in total
 
         float x = 0;
@@ -121,6 +124,7 @@ public class DrawView extends View {
 
         //String results = "";
         int remaining = showX;
+        ArrayList<AccessPoint> filterMac = new ArrayList<AccessPoint>();
         for (String mac : macs) {
             if (remaining-- == 0) break;
 
@@ -133,11 +137,33 @@ public class DrawView extends View {
             if (filter.filter(mac)) {
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
 
+
+
                 AccessPoint p = filter.getAPByMac(mac);
+                filterMac.add(p);
                 //Log.d("accesspont", p.getPoint().toString());
                 drawAP(p, distance, canvas);
             }
         }
+
+        if(filterMac.size()==2){
+            Point2D p1 = filterMac.get(0).getPoint2D();
+            Point2D p2 = filterMac.get(1).getPoint2D();
+            Circle2D c1 = new Circle2D(p1,strengthToDistance(
+                    macToLevel.get(filterMac.get(0).getMAC()),
+                    1000000.0 * macToFreq.get(filterMac.get(0).getMAC()
+             )));
+
+            Circle2D c2 = new Circle2D(p2,strengthToDistance(
+                    macToLevel.get(filterMac.get(1).getMAC()),
+                    1000000.0 * macToFreq.get(filterMac.get(1).getMAC()
+            )));
+            ArrayList<Point2D> intersection = new ArrayList<Point2D>(c1.intersections(c2));
+            normalize(intersection);
+
+        }
+
+
 
     }
 
@@ -184,8 +210,19 @@ public class DrawView extends View {
         Paint blue = new Paint();
         blue.setColor(Color.BLUE);
         blue.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(x * diffX, h-y * diffY, ap.getY() * (diffX), blue);
+        canvas.drawCircle(x * diffX, h - y * diffY, ap.getY() * (diffX), blue);
+
     }
+
+    public ArrayList<Point> normalize(ArrayList<Point2D> point2D){
+        ArrayList<Point> toReturn = new ArrayList<Point>();
+        for(Point2D p: point2D){
+            toReturn.add(new Point((int) p.getX(),(int) p.getY()));
+        }
+        return toReturn;
+    }
+
+
 
 
 

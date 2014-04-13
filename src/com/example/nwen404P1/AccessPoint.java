@@ -1,6 +1,7 @@
 package com.example.nwen404P1;
 
 import android.graphics.Point;
+import math.geom2d.Point2D;
 
 /**
  * Created by sriram on 23/03/14.
@@ -63,5 +64,9 @@ public class AccessPoint {
 
     public Point getPoint(){
         return new Point(this.x,this.y);
+    }
+
+    public Point2D getPoint2D(){
+        return new Point2D(this.x,this.y);
     }
 }
