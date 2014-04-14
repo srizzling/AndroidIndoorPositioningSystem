@@ -1,14 +1,12 @@
 package com.example.nwen404P1;
 
 
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-
 import java.util.ArrayList;
 
 /**
  * Created by sriram on 23/03/14.
+ *
+ * A Collection of AccessPoint available over all floors of Cotton Building in Victoria University
  */
 public class CottonAP {
     private ArrayList<AccessPoint> aps;
@@ -21,6 +19,12 @@ public class CottonAP {
         this.aps = aps;
     }
 
+    /**
+     * Return AccessPoint Object given a floor.
+     *
+     * @param floor floor of the AccessPoint
+     * @return An AccessPoint
+     */
     public ArrayList<AccessPoint> getAPByFloor(int floor) {
         ArrayList<AccessPoint> temp = new ArrayList<AccessPoint>();
         for (AccessPoint ap : aps) {
@@ -31,6 +35,11 @@ public class CottonAP {
         return temp;
     }
 
+    /**
+     * Returns the AccessPoint given a Mac Address
+     * @param mac String of the Mac Address to find
+     * @return AccessPoint
+     */
     public AccessPoint getAPByMac(String mac) {
         for (AccessPoint ap : aps) {
             if (ap.getMAC().equals(mac)) {
@@ -40,32 +49,25 @@ public class CottonAP {
         return null;
     }
 
-    /*
-    * Checks weather element exists here...
+    /**
+     * Given a Mac Address Return the floor the user is,
+     * If not return -1. Method used for validating the AccessPoint
+     * is indeed a location that we have access too
+     * @param mac
+     * @return
      */
-    public boolean filter(String mac, int floor) {
+    public int getFloorByMac(String mac) {
         for (AccessPoint ap : aps) {
-            //Log.d(mac, ap.getMAC());
-            //Log.d(mac, ap.getMAC());
-            if (ap.getMAC().equals(mac) && (floor==0 || ap.getFloor() == floor)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int getFloorByMac(String mac){
-        for (AccessPoint ap : aps) {
-            //Log.d(mac, ap.getMAC());
-            //Log.d(mac, ap.getMAC());
             if (ap.getMAC().equals(mac)) {
                 return ap.getFloor();
             }
         }
         return -1;
-
     }
 
+    /**
+     * A Super Ugly method that Adds all the  AccessPoints to the CottonAP collection
+     */
     public void setUpAllAps() {
         ArrayList<AccessPoint> allAps = new ArrayList<AccessPoint>();
         AccessPoint ap1 = new AccessPoint("2c:3f:38:2a:d9:60", 3, 29, 40, "Outside CO338");
@@ -130,10 +132,4 @@ public class CottonAP {
         allAps.add(ap29);
         setAccessPoints(allAps);
     }
-
-    public ArrayList<AccessPoint> getAll() {
-        return aps;
-    }
-
-
 }

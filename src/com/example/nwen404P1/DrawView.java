@@ -23,7 +23,6 @@ public class DrawView extends View {
 
     private Context context;
 
-
     private ArrayList<AccessPoint> aps = new ArrayList<AccessPoint>();
     private ArrayList<Point> pList;
     private Map<String, Double> macToLevel;
@@ -33,8 +32,8 @@ public class DrawView extends View {
     private HashMap<AccessPoint, Double> filterMac;
     private double total = 0;
     private int w = getWidth();
-    private int h = getHeight();
     private int diffX = w / 90;
+    private int h = getHeight();
     private int diffY = h / 90;
 
 
@@ -72,7 +71,7 @@ public class DrawView extends View {
      * position and put the mac address in a link list and populate the other two HashMaps with its relative frequency amd
      * Signal Strength.
      */
-    public void createNewWorkerThread(){
+    public void createNewWorkerThread() {
         final Handler handler = new Handler(); // Easy Mangement of worker thread for polling APS
         final WifiManager mainWifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         final double factor = 0.50;
@@ -127,7 +126,7 @@ public class DrawView extends View {
             canvas.drawCircle(ap.getX() * diffX, h - (ap.getY() * diffY), 8, red);
         }
 
-       //Loop through all the MACS found and filter them based of known list of AccessPoints.
+        //Loop through all the MACS found and filter them based of known list of AccessPoints.
         for (String mac : macs) {
 
             //Distance of AP based off current location
@@ -139,7 +138,7 @@ public class DrawView extends View {
             int macByFloor = filter.getFloorByMac(mac);
 
             //If MacByFloor is larger than 0, that means we know the location of the MAC found.
-            if (macByFloor>=0) {
+            if (macByFloor >= 0) {
 
                 //Calculate the ABS value to see if we need to apply a filter on it
                 int diff = Math.abs(floor - macByFloor);
@@ -165,7 +164,7 @@ public class DrawView extends View {
 
         Point2D currentPos = calcCurrPos();
         drawCurrentPos(currentPos, canvas);
-        canvas.drawText("Collected Shit: "+filterMac.size(), 32, 32, paint);
+        canvas.drawText("Collected Shit: " + filterMac.size(), 32, 32, paint);
     }
 
     /**
@@ -174,14 +173,14 @@ public class DrawView extends View {
      *
      * @return Point object showing the current postion of the user
      */
-    public Point2D calcCurrPos(){
+    public Point2D calcCurrPos() {
 
         double xSum = 0, ySum = 0;
         for (Map.Entry<AccessPoint, Double> ap : filterMac.entrySet()) {
             AccessPoint key = ap.getKey();
             double distance = ap.getValue();
 
-            double factor = distance/total;
+            double factor = distance / total;
 
             //Normilize the distance vectors and add them to get the current location of user
             xSum += key.getX() * factor;
@@ -201,16 +200,16 @@ public class DrawView extends View {
         double x = p.getX();
         double y = p.getY();
         c.drawText("X " + (int) x + " Y: " + (int) y, 60, (132), paint);
-        c.drawCircle((float) x*diffX, h- (float) (y*diffY), 15, paint);
+        c.drawCircle((float) x * diffX, h - (float) (y * diffY), 15, paint);
     }
 
     /**
      * Given an AccessPoint draw the location of the AccessPoint and distance on the map.
      * This methods highlights that its active given your current location
      *
-     * @param ap - The AccessPoint object with its x,y coordinates
+     * @param ap       - The AccessPoint object with its x,y coordinates
      * @param distance - The radius of the Signal Strength -> Distance calculation
-     * @param canvas - A referenced canvas object for drawing the Position
+     * @param canvas   - A referenced canvas object for drawing the Position
      */
     private void drawActiveAP(AccessPoint ap, double distance, Canvas canvas) {
         Point point = ap.getPoint();
@@ -230,7 +229,7 @@ public class DrawView extends View {
      * with some sampled factors that consideration environment and signal distortion.
      *
      * @param level - RSSI based on your current location from the AP
-     * @param freq - Frequency is Hertz (Must be converted from MegaHertz)
+     * @param freq  - Frequency is Hertz (Must be converted from MegaHertz)
      * @return distance - A double representation of the distance from current location to AP
      */
     private double strengthToDistance(double level, double freq) {
@@ -249,6 +248,7 @@ public class DrawView extends View {
 
     /**
      * Method that allows outsiders to set the current floor
+     *
      * @param floor - A int representing the current floor the user is has given
      */
     public void setFloor(int floor) {
@@ -257,6 +257,7 @@ public class DrawView extends View {
 
     /**
      * Sets the list of APS to represent on the Map
+     *
      * @param aps An ArrayList<AccessPoints> of the given floor
      */
     public void setAps(ArrayList<AccessPoint> aps) {
