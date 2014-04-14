@@ -67,6 +67,6 @@ public class AccessPoint {
     }
 
     public Point2D getPoint2D(int diffX, int diffY, int h){
-        return new Point2D(this.x*diffX,(h-this.y)*diffY);
+        return new Point2D(this.x*diffX,h-(this.y*diffY));
     }
 }

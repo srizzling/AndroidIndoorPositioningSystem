@@ -47,7 +47,7 @@ public class CottonAP {
         for (AccessPoint ap : aps) {
             //Log.d(mac, ap.getMAC());
             //Log.d(mac, ap.getMAC());
-            if (ap.getMAC().equals(mac) && ap.getFloor() == floor) {
+            if (ap.getMAC().equals(mac) && (floor==0 || ap.getFloor() == floor)) {
                 return true;
             }
         }

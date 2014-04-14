@@ -129,24 +129,20 @@ public class DrawView extends View {
         ArrayList<AccessPoint> filterMac = new ArrayList<AccessPoint>();
         for (String mac : macs) {
             if (remaining-- == 0) break;
-
-            DecimalFormat f = new DecimalFormat("###.00");
-
             double distance = 0.0;
-            //String[] name = WifiNames.getMacToName().get(mac);
+
             CottonAP filter = new CottonAP();
 
-            if (filter.filter(mac, floor)) {
+            if (filter.filter(mac, 0)) {
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
-
-
-
                 AccessPoint p = filter.getAPByMac(mac);
                 filterMac.add(p);
-                //Log.d("accesspont", p.getPoint().toString());
                 drawAP(p, distance, canvas);
             }
-            if(filterMac.size()==2){
+            if(filterMac.size()>=3){
+                if (null!=centroid(convertAPList(filterMac))) drawPoint(centroid(convertAPList(filterMac)), canvas, true);
+            }
+            else if(filterMac.size()==2){
                 Point2D p1 = filterMac.get(0).getPoint2D(diffX, diffY, h);
                 Point2D p2 = filterMac.get(1).getPoint2D(diffX, diffY, h);
                 Circle2D c1 = new Circle2D(p1,strengthToDistance(
@@ -160,7 +156,14 @@ public class DrawView extends View {
                         ))* diffX);
                 ArrayList<Point2D> intersection = new ArrayList<Point2D>(c1.intersections(c2));
                 drawPoints(intersection, canvas);
-
+                //drawLineBetweenPoints(intersection, canvas);
+                if (null!=centroid(intersection)) drawPoint(centroid(intersection), canvas, false);
+            } else if (filterMac.size()==1){
+                Paint blue = new Paint();
+                blue.setColor(Color.BLUE);
+                blue.setTextSize(30);
+                //canvas.drawText("X "+(int) filterMac.get(0).getX()+" Y: "+(int)filterMac.get(0).getY()  , 60, 32, blue);
+                canvas.drawCircle(filterMac.get(0).getX() * diffX, h-(filterMac.get(0).getY() * diffY), 8, red);
             }
         }
 
@@ -172,8 +175,11 @@ public class DrawView extends View {
 
     }
 
-    public void drawCurrentPos(){
 
+
+    public void drawLineBetweenPoints(ArrayList<Point2D> points, Canvas canvas){
+        //Size of array must be 2.
+        if(points.size()==2) canvas.drawLine((float) points.get(0).getX(), (float) points.get(0).getY(),  (float) points.get(1).getX(),  (float) points.get(1).getY(), paint);
     }
 
 
@@ -187,17 +193,33 @@ public class DrawView extends View {
         return dist;
     }
 
+    public void drawPoint(Point2D p, Canvas c, boolean draw){
+        Paint blue = new Paint();
+        blue.setColor(Color.BLUE);
+        blue.setTextSize(30);
+        int w = getWidth();
+        int h = getHeight();
+        int diffX = w / 90;
+        int diffY = h / 90;
+        double x = p.getX()/diffX;
+        double y = (p.getY()/diffY);
+
+        if(draw) c.drawText("X "+(int) x+" Y: "+(int)y/2  , 60,  (132), blue);
+        else c.drawText("X "+(int) x+" Y: "+(int)y/2  , 60, (int) 32, blue);
+        c.drawCircle((float) p.getX(), (float) p.getY(), 15, blue);
+
+    }
+
     public void drawPoints(ArrayList<Point2D> intersections, Canvas c){
         Paint blue = new Paint();
-        blue.setColor(Color.YELLOW);
+        blue.setColor(Color.GREEN);
         blue.setTextSize(30);
         int w = getWidth();
         int h = getHeight();
         int diffX = w / 90;
         int diffY = h / 90;
         for(Point2D p: intersections){
-            c.drawText(p.toString(), 60, 32 + (float) p.getX(), blue);
-            c.drawCircle((float) p.getX()+(4*diffX), (float) p.getY()+(4*diffY), 8, blue);
+            c.drawCircle((float) p.getX(), (float) p.getY(), 15, blue);
         }
     }
 
@@ -206,15 +228,16 @@ public class DrawView extends View {
      *
      * @return
      */
-    public Point centroid(ArrayList<Point> points) {
+    public Point2D centroid(ArrayList<Point2D> points) {
         int size = points.size();
         int totalX = 0;
         int totalY = 0;
-        for (Point p : points) {
-            totalX += p.x;
-            totalY += p.y;
+        for (Point2D p : points) {
+            totalX += p.getX();
+            totalY += p.getY();
         }
-        return new Point(totalX / size, totalY / size);
+        if (size!=0) return new Point2D(totalX / size, totalY / size);
+        return null;
     }
 
 
@@ -230,7 +253,7 @@ public class DrawView extends View {
         int x = point.x;
         int y = point.y;
         canvas.drawCircle(ap.getX() * diffX, h - (ap.getY() * diffY), 8, green);
-        canvas.drawText(ap.getDescription()+ distance,ap.getX() * diffX, h - (ap.getY() * diffY), green);
+        canvas.drawText(ap.getX() + " " + ap.getY(),ap.getX() * diffX, h - (ap.getY() * diffY), green);
         Paint blue = new Paint();
         blue.setColor(Color.BLUE);
         blue.setStyle(Paint.Style.STROKE);
@@ -275,6 +298,18 @@ public class DrawView extends View {
 
     public void setFloor(int floor){
         this.floor = floor;
+    }
+
+    public ArrayList<Point2D> convertAPList(ArrayList<AccessPoint> aps){
+        int w = getWidth();
+        int h = getHeight();
+        int diffX = w / 90;
+        int diffY = h / 90;
+        ArrayList<Point2D> toReturn = new ArrayList<Point2D>();
+        for(AccessPoint ap: aps){
+            toReturn.add(ap.getPoint2D(diffX, diffY, h));
+        }
+        return toReturn;
     }
 
 
