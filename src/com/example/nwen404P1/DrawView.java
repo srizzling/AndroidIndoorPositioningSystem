@@ -15,6 +15,7 @@ import android.widget.TextView;
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
 
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -31,6 +32,7 @@ public class DrawView extends View {
     Map<String, Integer> macToFreq;
     TextView text;
     List<String> macs;
+    int floor = 0;
 
     public DrawView(Context context) {
         super(context);
@@ -134,7 +136,7 @@ public class DrawView extends View {
             //String[] name = WifiNames.getMacToName().get(mac);
             CottonAP filter = new CottonAP();
 
-            if (filter.filter(mac)) {
+            if (filter.filter(mac, floor)) {
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
 
 
@@ -144,26 +146,33 @@ public class DrawView extends View {
                 //Log.d("accesspont", p.getPoint().toString());
                 drawAP(p, distance, canvas);
             }
+            if(filterMac.size()==2){
+                Point2D p1 = filterMac.get(0).getPoint2D(diffX, diffY, h);
+                Point2D p2 = filterMac.get(1).getPoint2D(diffX, diffY, h);
+                Circle2D c1 = new Circle2D(p1,strengthToDistance(
+                        macToLevel.get(filterMac.get(0).getMAC()),
+                        1000000.0 * macToFreq.get(filterMac.get(0).getMAC()
+                        ))* diffX);
+
+                Circle2D c2 = new Circle2D(p2,strengthToDistance(
+                        macToLevel.get(filterMac.get(1).getMAC()),
+                        1000000.0 * macToFreq.get(filterMac.get(1).getMAC()
+                        ))* diffX);
+                ArrayList<Point2D> intersection = new ArrayList<Point2D>(c1.intersections(c2));
+                drawPoints(intersection, canvas);
+
+            }
         }
 
-        if(filterMac.size()==2){
-            Point2D p1 = filterMac.get(0).getPoint2D();
-            Point2D p2 = filterMac.get(1).getPoint2D();
-            Circle2D c1 = new Circle2D(p1,strengthToDistance(
-                    macToLevel.get(filterMac.get(0).getMAC()),
-                    1000000.0 * macToFreq.get(filterMac.get(0).getMAC()
-             )));
-
-            Circle2D c2 = new Circle2D(p2,strengthToDistance(
-                    macToLevel.get(filterMac.get(1).getMAC()),
-                    1000000.0 * macToFreq.get(filterMac.get(1).getMAC()
-            )));
-            ArrayList<Point2D> intersection = new ArrayList<Point2D>(c1.intersections(c2));
-            normalize(intersection);
-
-        }
+        filterMac.clear();
+        macToLevel.clear();
+        macToFreq.clear();
+        macs.clear();
 
 
+    }
+
+    public void drawCurrentPos(){
 
     }
 
@@ -178,6 +187,19 @@ public class DrawView extends View {
         return dist;
     }
 
+    public void drawPoints(ArrayList<Point2D> intersections, Canvas c){
+        Paint blue = new Paint();
+        blue.setColor(Color.YELLOW);
+        blue.setTextSize(30);
+        int w = getWidth();
+        int h = getHeight();
+        int diffX = w / 90;
+        int diffY = h / 90;
+        for(Point2D p: intersections){
+            c.drawText(p.toString(), 60, 32 + (float) p.getX(), blue);
+            c.drawCircle((float) p.getX()+(4*diffX), (float) p.getY()+(4*diffY), 8, blue);
+        }
+    }
 
     /**
      * Calculates the centroid based off an array of points
@@ -204,13 +226,17 @@ public class DrawView extends View {
         Point point = ap.getPoint();
         Paint green = new Paint();
         green.setColor(Color.GREEN);
+        green.setTextSize(30);
         int x = point.x;
         int y = point.y;
         canvas.drawCircle(ap.getX() * diffX, h - (ap.getY() * diffY), 8, green);
+        canvas.drawText(ap.getDescription()+ distance,ap.getX() * diffX, h - (ap.getY() * diffY), green);
         Paint blue = new Paint();
         blue.setColor(Color.BLUE);
         blue.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(x * diffX, h - y * diffY, ap.getY() * (diffX), blue);
+        canvas.drawCircle(x * diffX, h - y * diffY, (float) distance * (diffX), blue);
+        canvas.drawText("d:" + distance +" "+ap.getDescription(), 0,  0, green);
+
 
     }
 
@@ -245,6 +271,10 @@ public class DrawView extends View {
         double distancePlaneM = Math.sqrt(Math.pow(directDistanceM, 2) - Math.pow(ROUTER_HEIGHT, 2));
         return distancePlaneM;
 
+    }
+
+    public void setFloor(int floor){
+        this.floor = floor;
     }
 
 

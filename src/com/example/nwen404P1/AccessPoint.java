@@ -66,7 +66,7 @@ public class AccessPoint {
         return new Point(this.x,this.y);
     }
 
-    public Point2D getPoint2D(){
-        return new Point2D(this.x,this.y);
+    public Point2D getPoint2D(int diffX, int diffY, int h){
+        return new Point2D(this.x*diffX,(h-this.y)*diffY);
     }
 }

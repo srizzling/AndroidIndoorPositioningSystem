@@ -25,6 +25,7 @@ public class Display extends Activity {
         drawView.setBackgroundColor(Color.WHITE);
         String value = getIntent().getExtras().getString("level");
         aps.getAPByFloor(Integer.parseInt(value));
+        drawView.setFloor(Integer.parseInt(value));
         drawView.setAps(aps.getAPByFloor(Integer.parseInt(value)));
         setContentView(drawView);
     }

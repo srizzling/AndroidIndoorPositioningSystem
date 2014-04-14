@@ -43,11 +43,11 @@ public class CottonAP {
     /*
     * Checks weather element exists here...
      */
-    public boolean filter(String mac) {
+    public boolean filter(String mac, int floor) {
         for (AccessPoint ap : aps) {
             //Log.d(mac, ap.getMAC());
             //Log.d(mac, ap.getMAC());
-            if (ap.getMAC().equals(mac)) {
+            if (ap.getMAC().equals(mac) && ap.getFloor() == floor) {
                 return true;
             }
         }

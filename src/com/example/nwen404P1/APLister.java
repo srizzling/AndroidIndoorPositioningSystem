@@ -96,7 +96,7 @@ public class APLister extends Activity implements View.OnClickListener {
             //String[] name = WifiNames.getMacToName().get(mac);
             CottonAP filter = new CottonAP();
 
-            if (filter.filter(mac)) {
+            if (filter.filter(mac,2)) {
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
 
                 results += filter.getAPByMac(mac).getDescription() + " : " + mac + " : " + f.format(macToLevel.get(mac)) +
