@@ -163,6 +163,7 @@ public class DrawView extends View {
 
         Point2D point = new Point2D(xSum, ySum);
         drawPoint(point, canvas, false);
+        canvas.drawText("Collected Shit: "+filterMac.size(), 32, 32, paint);
 
 
     }
