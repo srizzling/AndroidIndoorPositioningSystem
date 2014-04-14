@@ -54,6 +54,18 @@ public class CottonAP {
         return false;
     }
 
+    public int getFloorByMac(String mac){
+        for (AccessPoint ap : aps) {
+            //Log.d(mac, ap.getMAC());
+            //Log.d(mac, ap.getMAC());
+            if (ap.getMAC().equals(mac)) {
+                return ap.getFloor();
+            }
+        }
+        return -1;
+
+    }
+
     public void setUpAllAps() {
         ArrayList<AccessPoint> allAps = new ArrayList<AccessPoint>();
         AccessPoint ap1 = new AccessPoint("2c:3f:38:2a:d9:60", 3, 29, 40, "Outside CO338");
@@ -84,6 +96,9 @@ public class CottonAP {
         AccessPoint ap26 = new AccessPoint("00:3a:98:04:af:90", 5, 48, 7, "Outside CO519");
         AccessPoint ap27 = new AccessPoint("08:17:35:9c:f7:50", 5, 57, 7, "Outside CO515");
         AccessPoint ap28 = new AccessPoint("00:23:33:20:fd:40", 5, 73, 10, "Inside CO508");
+
+        AccessPoint ap29 = new AccessPoint("64:e9:50:b8:41:40", 2, 45, 32, "Inside CO219");
+
         allAps.add(ap1);
         allAps.add(ap2);
         allAps.add(ap3);
@@ -112,6 +127,7 @@ public class CottonAP {
         allAps.add(ap26);
         allAps.add(ap27);
         allAps.add(ap28);
+        allAps.add(ap29);
         setAccessPoints(allAps);
     }
 

@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class DrawView extends View {
+    private static final int showX = 300;
     Paint paint = new Paint();
     ArrayList<AccessPoint> aps = new ArrayList<AccessPoint>();
     ArrayList<Point> pList;
@@ -27,23 +28,26 @@ public class DrawView extends View {
     int h;
     int diffX;
     int diffY;
-    private static final int showX = 300;
     Map<String, Double> macToLevel;
     Map<String, Integer> macToFreq;
     TextView text;
     List<String> macs;
     int floor = 0;
+    HashMap<AccessPoint, Double> filterMac;
+    double total = 0;
 
     public DrawView(Context context) {
         super(context);
         paint.setColor(Color.BLACK);
+        paint.setTextSize(32);
         final Handler h = new Handler();
         final WifiManager mainWifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
+        filterMac = new HashMap<AccessPoint, Double>();
         macToFreq = new HashMap<String, Integer>();
         macToLevel = new HashMap<String, Double>();
+        total = 0;
 
-        final double factor = 0.96;
+        final double factor = 0.50;
 
 
         macs = new LinkedList<String>();
@@ -88,15 +92,11 @@ public class DrawView extends View {
     public void onDraw(Canvas canvas) {
 
 
-
-
-
         //Assumption here that everything is done in landscape
         int w = getWidth();
         int h = getHeight();
         int diffX = w / 90;
         int diffY = h / 90;
-
 
 
         // there is 87 points in total
@@ -117,8 +117,8 @@ public class DrawView extends View {
         pList = new ArrayList<Point>();
         for (AccessPoint ap : aps) {
             pList.add(new Point(ap.getX(), ap.getY()));
-            canvas.drawText(ap.getDescription(), ap.getX() * diffX, h-(ap.getY() * diffY), paint);
-            canvas.drawCircle(ap.getX() * diffX, h-(ap.getY() * diffY), 8, red);
+            canvas.drawText(ap.getDescription(), ap.getX() * diffX, h - (ap.getY() * diffY), paint);
+            canvas.drawCircle(ap.getX() * diffX, h - (ap.getY() * diffY), 8, red);
         }
 
         // drawShape(canvas);
@@ -126,62 +126,53 @@ public class DrawView extends View {
 
         //String results = "";
         int remaining = showX;
-        ArrayList<AccessPoint> filterMac = new ArrayList<AccessPoint>();
+
+
         for (String mac : macs) {
             if (remaining-- == 0) break;
             double distance = 0.0;
 
             CottonAP filter = new CottonAP();
+            int macByFloor = filter.getFloorByMac(mac);
 
-            if (filter.filter(mac, 0)) {
+
+            if (macByFloor>=0) {
+
+                int diff = Math.abs(floor - macByFloor);
                 distance = strengthToDistance(macToLevel.get(mac), 1000000.0 * macToFreq.get(mac));
+                double floorScaling = 1.0 / (diff + 1.0);
+                double weight = 0.0 - (Math.pow(distance, 4) * floorScaling);
+
+                total += weight;
                 AccessPoint p = filter.getAPByMac(mac);
-                filterMac.add(p);
+                //Log.d("distance" + p.getDescription(),""+distance);
+                filterMac.put(p, weight);
                 drawAP(p, distance, canvas);
             }
-            if(filterMac.size()>=3){
-                if (null!=centroid(convertAPList(filterMac))) drawPoint(centroid(convertAPList(filterMac)), canvas, true);
-            }
-            else if(filterMac.size()==2){
-                Point2D p1 = filterMac.get(0).getPoint2D(diffX, diffY, h);
-                Point2D p2 = filterMac.get(1).getPoint2D(diffX, diffY, h);
-                Circle2D c1 = new Circle2D(p1,strengthToDistance(
-                        macToLevel.get(filterMac.get(0).getMAC()),
-                        1000000.0 * macToFreq.get(filterMac.get(0).getMAC()
-                        ))* diffX);
 
-                Circle2D c2 = new Circle2D(p2,strengthToDistance(
-                        macToLevel.get(filterMac.get(1).getMAC()),
-                        1000000.0 * macToFreq.get(filterMac.get(1).getMAC()
-                        ))* diffX);
-                ArrayList<Point2D> intersection = new ArrayList<Point2D>(c1.intersections(c2));
-                drawPoints(intersection, canvas);
-                //drawLineBetweenPoints(intersection, canvas);
-                if (null!=centroid(intersection)) drawPoint(centroid(intersection), canvas, false);
-            } else if (filterMac.size()==1){
-                Paint blue = new Paint();
-                blue.setColor(Color.BLUE);
-                blue.setTextSize(30);
-                //canvas.drawText("X "+(int) filterMac.get(0).getX()+" Y: "+(int)filterMac.get(0).getY()  , 60, 32, blue);
-                canvas.drawCircle(filterMac.get(0).getX() * diffX, h-(filterMac.get(0).getY() * diffY), 8, red);
-            }
+        }
+        double xSum = 0, ySum = 0;
+        for (Map.Entry<AccessPoint, Double> ap : filterMac.entrySet()) {
+            AccessPoint key = ap.getKey();
+            double distance = ap.getValue();
+
+            double factor = distance/total;
+            xSum += key.getX() * factor;
+            ySum += key.getY() * factor;
         }
 
-        filterMac.clear();
-        macToLevel.clear();
-        macToFreq.clear();
-        macs.clear();
+        Point2D point = new Point2D(xSum, ySum);
+        drawPoint(point, canvas, false);
 
 
     }
 
 
-
-    public void drawLineBetweenPoints(ArrayList<Point2D> points, Canvas canvas){
+    public void drawLineBetweenPoints(ArrayList<Point2D> points, Canvas canvas) {
         //Size of array must be 2.
-        if(points.size()==2) canvas.drawLine((float) points.get(0).getX(), (float) points.get(0).getY(),  (float) points.get(1).getX(),  (float) points.get(1).getY(), paint);
+        if (points.size() == 2)
+            canvas.drawLine((float) points.get(0).getX(), (float) points.get(0).getY(), (float) points.get(1).getX(), (float) points.get(1).getY(), paint);
     }
-
 
 
     public void setAps(ArrayList<AccessPoint> aps) {
@@ -193,7 +184,7 @@ public class DrawView extends View {
         return dist;
     }
 
-    public void drawPoint(Point2D p, Canvas c, boolean draw){
+    public void drawPoint(Point2D p, Canvas c, boolean draw) {
         Paint blue = new Paint();
         blue.setColor(Color.BLUE);
         blue.setTextSize(30);
@@ -201,16 +192,16 @@ public class DrawView extends View {
         int h = getHeight();
         int diffX = w / 90;
         int diffY = h / 90;
-        double x = p.getX()/diffX;
-        double y = (p.getY()/diffY);
+        double x = p.getX();
+        double y = p.getY();
 
-        if(draw) c.drawText("X "+(int) x+" Y: "+(int)y/2  , 60,  (132), blue);
-        else c.drawText("X "+(int) x+" Y: "+(int)y/2  , 60, (int) 32, blue);
-        c.drawCircle((float) p.getX(), (float) p.getY(), 15, blue);
+        c.drawText("X " + (int) x + " Y: " + (int) y, 60, (132), blue);
+
+        c.drawCircle((float) x*diffX, h- (float) (y*diffY), 15, blue);
 
     }
 
-    public void drawPoints(ArrayList<Point2D> intersections, Canvas c){
+    public void drawPoints(ArrayList<Point2D> intersections, Canvas c) {
         Paint blue = new Paint();
         blue.setColor(Color.GREEN);
         blue.setTextSize(30);
@@ -218,7 +209,7 @@ public class DrawView extends View {
         int h = getHeight();
         int diffX = w / 90;
         int diffY = h / 90;
-        for(Point2D p: intersections){
+        for (Point2D p : intersections) {
             c.drawCircle((float) p.getX(), (float) p.getY(), 15, blue);
         }
     }
@@ -236,12 +227,12 @@ public class DrawView extends View {
             totalX += p.getX();
             totalY += p.getY();
         }
-        if (size!=0) return new Point2D(totalX / size, totalY / size);
+        if (size != 0) return new Point2D(totalX / size, totalY / size);
         return null;
     }
 
 
-    private void drawAP(AccessPoint ap, double distance, Canvas canvas){
+    private void drawAP(AccessPoint ap, double distance, Canvas canvas) {
         int w = getWidth();
         int h = getHeight();
         int diffX = w / 90;
@@ -253,26 +244,23 @@ public class DrawView extends View {
         int x = point.x;
         int y = point.y;
         canvas.drawCircle(ap.getX() * diffX, h - (ap.getY() * diffY), 8, green);
-        canvas.drawText(ap.getX() + " " + ap.getY(),ap.getX() * diffX, h - (ap.getY() * diffY), green);
+        //canvas.drawText(ap.getX() + " " + ap.getY(), ap.getX() * diffX, h - (ap.getY() * diffY), green);
         Paint blue = new Paint();
         blue.setColor(Color.BLUE);
         blue.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(x * diffX, h - y * diffY, (float) distance * (diffX), blue);
-        canvas.drawText("d:" + distance +" "+ap.getDescription(), 0,  0, green);
+        canvas.drawText("d:" + distance + " " + ap.getDescription(), 0, 0, green);
 
 
     }
 
-    public ArrayList<Point> normalize(ArrayList<Point2D> point2D){
+    public ArrayList<Point> normalize(ArrayList<Point2D> point2D) {
         ArrayList<Point> toReturn = new ArrayList<Point>();
-        for(Point2D p: point2D){
-            toReturn.add(new Point((int) p.getX(),(int) p.getY()));
+        for (Point2D p : point2D) {
+            toReturn.add(new Point((int) p.getX(), (int) p.getY()));
         }
         return toReturn;
     }
-
-
-
 
 
     private double strengthToDistance(double level, double freq) {
@@ -291,26 +279,25 @@ public class DrawView extends View {
 
         directDistanceM = Math.max(directDistanceM, ROUTER_HEIGHT);
 
-        double distancePlaneM = Math.sqrt(Math.pow(directDistanceM, 2) - Math.pow(ROUTER_HEIGHT, 2));
-        return distancePlaneM;
+
+        return directDistanceM;
 
     }
 
-    public void setFloor(int floor){
+    public void setFloor(int floor) {
         this.floor = floor;
     }
 
-    public ArrayList<Point2D> convertAPList(ArrayList<AccessPoint> aps){
+    public ArrayList<Point2D> convertAPList(ArrayList<AccessPoint> aps) {
         int w = getWidth();
         int h = getHeight();
         int diffX = w / 90;
         int diffY = h / 90;
         ArrayList<Point2D> toReturn = new ArrayList<Point2D>();
-        for(AccessPoint ap: aps){
+        for (AccessPoint ap : aps) {
             toReturn.add(ap.getPoint2D(diffX, diffY, h));
         }
         return toReturn;
     }
-
 
 }
