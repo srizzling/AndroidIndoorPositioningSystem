@@ -1,3 +1,4 @@
+
 \documentclass[12pt]{article}
 \usepackage{setspace}
 \usepackage[margin=1in]{geometry}
@@ -8,11 +9,11 @@
 \begin{titlepage}
 \begin{center}
 	\Huge
-	\textbf{A comparison of Bluetooth-Based Indoor Localization Systems} \\
+	\textbf{A comparative analysis of Bluetooth based Indoor Localization Systems} \\
 	\large    
 
 	\vspace{0.5cm}
-	By \textbf{Sriram Venkatesh}\\
+	By Sriram Venkatesh\\
 	Victoria University of Wellington\\
 	300236116 \\
 
@@ -20,20 +21,32 @@
 	\textbf{Abstract}
 \end{center}
 \doublespacing
-	Lorem ipsum dolor...
+	There is an increasing demand for accurate indoor positioning system as the popularity of sensor enabled smartphones rises. However, Indoor Position systems has not yet achieved the same success as that of outdoor positioning. An accurate indoor localization system can be characterized by high accuracy, short training phase, cost-effective and robustness. Accurate indoor localization has the potential to transform the way people navigate indoors in a similar way that GPS transformed the way people navigate outdoors. The objective of this project is to compare different Bluetooth based Indoor Localization System that achieve the most accurate position. 
 
 
 \end{titlepage}
 
 \doublespacing
-\section*{Introduction}
-The usage of localization systems has risen recently due to the widespread adoption of smartphones. Smartphones take advantage of the information that is accessible from the wireless sensors available on mobile devices, which allow indoor positioning systems to accurately locate users or objects. One of the most popular sensors on a mobile device is the GPS receiver. \cite{HABITS} \\
+\section{Introduction}
 
-However, GPS does not provide acceptable accuracy due to its line of site infrastructure \cite{fusionmethod} which means it is unable to locate users or objects inside buildings or structures. Due to this fact, indoor position systems do not use satellites, instead these systems rely on nearby anchors or nodes, which either actively locate or passively provide contextual information for devices to get sensed. \\
+\subsection{Bluetooth}
+Bluetooth is a wireless technology standard which is used for transmitting data over short distances. It uses a short-wavelength UHF radio waves from 2.4 to 2.485Ghz range, which is within the 2.4 GHz ISM frequency band. Bluetooth was designed for low power consumption and is based on low-cost transceiver microchips. The Bluetooth specification was conceived in 1993 and is now managed by the Bluetooth Special Interest Group (SIG). \\
 
-Accurate indoor localization has the potential to transform the way people navigate indoors in a similar way that GPS transformed the way people navigate outdoors. The two most common techniques of localization is the use of cellular radio and Wi-Fi radio. Both of these methods use a significantly 
+Before setting up a connection between devices, a device must perform an inquiry in order to discover other devices that within its range, which is a rather lengthy process. During testing, the Samsung Galaxy S4 took up to 10.24 seconds to connect. Any device that is in discoverable mode will then reply by sending back information about itself, such as its name and unique address. The two devices can pair with each other, a process in which they create a common link key which is stored on each devices. \\
 
-\section*{Bluetooth}
+In recent years, Bluetooth has emerged as a viable choice of technology in indoor positioning systems due to the increase in the number of Bluetooth devices over the last decade. Bluetooth's properties such as low cost and high availability has led to the development of many indoor positioning systems. 
+
+\subsection{Indoor Positioning}
+The usage of localization systems has risen recently due to the widespread adoption of smartphones. Smartphones take advantage of the information that is accessible from the wireless sensors available on mobile devices, which allow indoor positioning systems to accurately locate users or objects. \\
+
+One of the most popular sensors on a mobile device is the GPS receiver \cite{HABITS}. GPS is used for outdoor position determination. The GPS satellites that orbit the earth transmit signals to a GPS receiver. These receivers passively receive satellite signals, they do not transmit and require an unobstructed view of the sky. \cite{active-passive} Because of the line of sight infrastructure of GPS, it does not provide acceptable indoor localization accuracy \cite{fusionmethod}. Due to this fact, indoor position systems do not use satellites, instead these systems rely on nearby anchors or nodes, which either actively locate or passively provide contextual information for devices to get sensed. \\
+
+In recent years, indoor positioning has been studied by many researchers using different technologies as the nodes. Most of these solutions are based on a single technology. Several indoor positioning systems have been developed over the last decade, relying on a wide variety of technologies including WLAN, infrared and ultra-source among others but there are still a few commercial solutions available, and the ones that do exist are often costly and complex to set up. Currently, the choice of technology and positioning technique depends on requirements of the system. For instance, radio frequency based technologies such as IEEE 802.11 are inexpensive to deploy but has lower precision than many other kinds of technologies, whereas a system based on ultrasound has a very high precision but its relatively expensive. \cite{bluetooth-master-thesis}\\
+
+An accurate indoor localization system can be characterized by high accuracy, short training phase, cost-effective and robustness. Accurate indoor localization has the potential to transform the way people navigate indoors in a similar way that GPS transformed the way people navigate outdoors. \\
+
+\subsection{Scope}
+This paper will look into existing systems of indoor localization with bluetooth-based technologies and critically evaluate the best system. This paper is therefore not concerned with the development of new position techniques but rather an evaluation and modification of existing ones. At the conclusion of the report will provide a experimental design for a accurate bluetooth based localization system based on comparative analysis. 
 
 
 \section*{Comparative Parameters}
