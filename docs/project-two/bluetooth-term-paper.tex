@@ -29,13 +29,6 @@
 \doublespacing
 \section{Introduction}
 
-\subsection{Bluetooth}
-Bluetooth is a wireless technology standard which is used for transmitting data over short distances. It uses a short-wavelength UHF radio waves from 2.4 to 2.485Ghz range, which is within the 2.4 GHz ISM frequency band. Bluetooth was designed for low power consumption and is based on low-cost transceiver microchips. The Bluetooth specification was conceived in 1993 and is now managed by the Bluetooth Special Interest Group (SIG). \\
-
-Before setting up a connection between devices, a device must perform an inquiry in order to discover other devices that within its range, which is a rather lengthy process. During testing, the Samsung Galaxy S4 took up to 10.24 seconds to connect. Any device that is in discoverable mode will then reply by sending back information about itself, such as its name and unique address. The two devices can pair with each other, a process in which they create a common link key which is stored on each devices. \\
-
-In recent years, Bluetooth has emerged as a viable choice of technology in indoor positioning systems due to the increase in the number of Bluetooth devices over the last decade. Bluetooth's properties such as low cost and high availability has led to the development of many indoor positioning systems. 
-
 \subsection{Indoor Positioning}
 The usage of localization systems has risen recently due to the widespread adoption of smartphones. Smartphones take advantage of the information that is accessible from the wireless sensors available on mobile devices, which allow indoor positioning systems to accurately locate users or objects. \\
 
@@ -48,14 +41,56 @@ An accurate indoor localization system can be characterized by high accuracy, sh
 \subsection{Scope}
 This paper will look into existing systems of indoor localization with bluetooth-based technologies and critically evaluate the best system. This paper is therefore not concerned with the development of new position techniques but rather an evaluation and modification of existing ones. At the conclusion of the report will provide a experimental design for a accurate bluetooth based localization system based on comparative analysis. 
 
+\section{Bluetooth}
 
-\section*{Comparative Parameters}
+In recent years, Bluetooth has emerged as a viable choice of technology in indoor positioning systems due to the increase in the number of Bluetooth devices over the last decade. Bluetooth's properties such as low cost and high availability has led to the development of many indoor positioning systems.  An introduction to the Bluetooth technology is given in this section. This section also describes the different localization measures that available for Bluetooth. These measures are analsysed, and one is selected as the best one to use. 
+
+\subsection{Technology overview}
+Bluetooth is a wireless technology standard which is used for transmitting data over short distances. It uses a short-wavelength UHF radio waves from 2.4 to 2.485Ghz range, which is within the 2.4 GHz ISM frequency band. Bluetooth was designed for low power consumption and is based on low-cost transceiver microchips. The Bluetooth specification was conceived in 1993 and is now managed by the Bluetooth Special Interest Group (SIG). \\
+
+Before setting up a connection between devices, a device must perform an inquiry in order to discover other devices that within its range, which is a rather lengthy process. During testing, the Samsung Galaxy S4 took up to 10.24 seconds to connect. Any device that is in discoverable mode will then reply by sending back information about itself, such as its name and unique address. The two devices can pair with each other, a process in which they create a common link key which is stored on each devices. \\
+
+As mentioned above, Bluetooth supports low power communication between nodes. Therefore one of its features is power control. This feature allows a transmitter to adjust its strength based on RSSI. This therefore means we are able to change the transmission strength to ensure the received signal strength is within an optimal range for the receiver. The table below gives an overview of the three different power classes which are defined in the Bluetooth specification. \\
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Power class} & \textbf{Max power output (dBm)} & \textbf{Min power output (dBm)} \\ \hline
+1                    & 20                              & 1                               \\ \hline
+2                    & 4                               & -6                              \\ \hline
+3                    & 0                               & -                               \\ \hline
+\end{tabular}
+\caption{Power Classes Bluetooth Devices (sourced from the Bluetooth Specfication)}
+\label{my-label}
+\end{table}
+
+\subsection{Signal Parameters}
+
+The term Bluetooth signal parameters is used to denote all the status parameters. The Host Controller provides three different parameters. These are:
+
+\begin{itemize}
+  \item Received Signal Strength Indicator (RSSI)
+  \item Inquiry Result with RSSI
+  \item Link Quality (LQ)
+  \item Transmit Power Level (TPL)
+\end{itemize}
+
+\subsubsection{Inquiry Result with RSSI}
+Devices that want to connect using Bluetooth need to establish a connection. The initiating device will first send an inquiry state, which will continuously send inquiry message at random frequencies. During this period the master sends messages at two different frequencies in a timeslot. In the next time slot the master listens for a inquiry response message at the same frequency from the previous timeslot. The master will send inquiry message for 10.24 secs or until the target device has been detected. \\
+
+Devices that want to be discovered are set at inquiry scan state. It will listen for inquiry messages. Once a slave device receives an inquiry message, it responds after a small delay with Frequency Hopping Synchronization packet (FHS). The FHS packet contains a MAC address and other important information. \\
 
 
-\section*{Background}
+
+\section{Current State of Bluetooth Localization}
+The idea of using Bluetooth technology for localization is not novel. Due to the popularity of mobile devices, Bluetooth has become an attractive sensor for localization. This section will describe some of the localization systems and how they work. \\ 
+
+One of the first 
 
 
-\section*{Critque}
+
+\section*{Critique}
 
 
 \section*{Conclusions}
