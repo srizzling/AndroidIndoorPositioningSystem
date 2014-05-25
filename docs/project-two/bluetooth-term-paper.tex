@@ -1,6 +1,9 @@
 
 \documentclass[12pt]{article}
 \usepackage{setspace}
+\usepackage{graphicx}
+
+
 \usepackage[margin=1in]{geometry}
 
 
@@ -70,7 +73,7 @@ As mentioned above, Bluetooth supports low power communication between nodes. Th
 The term Bluetooth signal parameters is used to denote all the status parameters. The Host Controller provides three different parameters. These are:
 
 \begin{itemize}
-  \item Received Signal Strength Indicator (RSSI)
+  \item Received Signal Strength Indicator (RSSI) in connected state
   \item Inquiry Result with RSSI
   \item Link Quality (LQ)
   \item Transmit Power Level (TPL)
@@ -81,19 +84,56 @@ Devices that want to connect using Bluetooth need to establish a connection. The
 
 Devices that want to be discovered are set at inquiry scan state. It will listen for inquiry messages. Once a slave device receives an inquiry message, it responds after a small delay with Frequency Hopping Synchronization packet (FHS). The FHS packet contains a MAC address and other important information. \\
 
+Using the process above, the devices can discover the Bluetooth devices in its range. If it would like to connect to a device it has found, the initiating devices will wait till it receives a FHS packet with the correct unique address, and send an additional message to synchronize both device to establish a connection. When the initiating device receives the packet, it also receives an RSSI value, which depends on the power of the received signal. The Host Command Interface (HCI), allows for querying for both the MAC address and RSSI value of the last received FHS packet via an event called `Inquiry Result with RSSI'. The Bluetooth specification defines the RSSI value for the `Inquiry Result with RSSI' event as the signal strength in dBm. \\
+
+Below is a graph displaying the RSS samples in a 1 minute time period for stationary target and two access points. \\
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{graph}
+\caption{Measured RSS for a stationary target and two access points}
+\end{figure} 
+
+We can clearly make two observations in this graph.
+\begin{enumerate}
+  \item First it displays that for a stationary target, the RSS samples do not form a smooth 
+at line but instead show a high variation. For example the difference between the maximum and minimum RSS value for the red line is 20 dBm.
+  \item Secondly it shows that the sample rate is low, about 20 samples per minute
+\end{enumerate}
+
+The high variation in measurements will affect the localization. Increasing the number of samples can compensate for this effect. However, since the sample rate is low,
+relatively large window sizes are required by the localization algorithms to achieve reasonable
+accuracy. Real time target tracking is therefore not possible using the inquiry RSSI measure. 
 
 
-\section{Current State of Bluetooth Localization}
+\section{Current Bluetooth localization systems}
 The idea of using Bluetooth technology for localization is not novel. Due to the popularity of mobile devices, Bluetooth has become an attractive sensor for localization. This section will describe some of the localization systems and how they work. \\ 
 
-One of the first 
+\subsection{Hallberg and Nilsson}
+One of the earliest implementations on Bluetooth based localization is that of Hallberg and Nillson. \cite{hallberg-nilsson} They describe, a system which is calibrated using the Log-Normal Shadowing (LNS) model. The log-normal shadowing model attempts to describe signal propagation in buildings and indoor environments. Trilateration was used to estimate target locations. Also in this approach, RSSI values was measured using an active Bluetooth connection which has be proven to be inaccurate. 
 
 
 
-\section*{Critique}
+
+\section{Performance Analysis Taxonomy}
+The list below gives an overview of the properties which determine the performance of the localization system.
+
+\begin{itemize}
+  \item \textbf{Accuracy} is defined as the average distance between the estimated location and the actual location of an object.
+  \item \textbf{Responsiveness} The responsiveness determines how quickly the location estimate of a moving target is updated.
+  \item \textbf{Calibration effort} is effort required to be calibrate to make location estimates with reasonable accuracy. The amount of effort required for the calibration process can have a big influence on the usefulness of a system, especially if a lot of effort is required. Another factor of the calibration effort is whether it is a process that needs to be performed only once or repetitively. If calibration needs to be performed only once a large effort is less of a problem than if it has to be repeated over time.
+  \item \textbf{Adaptiveness} Some changes in the environment may affect the localization system. The ability of the localization system to cope with these changes is called its adaptiveness. 
+  \item \textbf{Operational constraints} These define under what circumstances the localization system will provide location estimates with reasonable accuracy
+\end{itemize}
+
+An ideal localization system estimates the target location by taking all the above considerations. Unfortunately, these systems do not exist. In reality these systems make a trade-off between these properties, giving more weight for certain properties in certain circumstances. \\
+
+Applying these terminologies, we will compare the several bluetooth based indoor localization techniques.
+
+\section{Critique}
 
 
-\section*{Conclusions}
+\section{Conclusions}
 
 \bibliographystyle{ieeetr}
 \bibliography{bib}
